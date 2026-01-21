@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import MegaMenu from "./MegaMenu";
 import MobileMenu from "./MobileMenu";
 import SearchOverlay from "./SearchOverlay";
@@ -60,7 +60,36 @@ function Navbar() {
   const [isStoreModalOpen, setIsStoreModalOpen] = useState(false);
   const [selectedStore, setSelectedStore] = useState(stores[0]);
   const [activeNavItem, setActiveNavItem] = useState("Home");
-  const [isCategoriesHovered, setIsCategoriesHovered] = useState(false);
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+
+  // Ref for close timeout
+  const closeTimeoutRef = useRef(null);
+
+  // Open mega menu (instant)
+  const openMegaMenu = useCallback(() => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    setIsCategoriesOpen(true);
+  }, []);
+
+  // Close mega menu (with delay)
+  const closeMegaMenu = useCallback(() => {
+    closeTimeoutRef.current = setTimeout(() => {
+      setIsCategoriesOpen(false);
+    }, 300); // 300ms delay before closing
+  }, []);
+
+  // Toggle mega menu on click
+  const toggleMegaMenu = useCallback((e) => {
+    e.preventDefault();
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    setIsCategoriesOpen((prev) => !prev);
+  }, []);
 
   // Scroll handler for compact mode
   useEffect(() => {
@@ -90,11 +119,20 @@ function Navbar() {
         setIsMobileMenuOpen(false);
         setIsSearchOpen(false);
         setIsStoreModalOpen(false);
-        setIsCategoriesHovered(false);
+        setIsCategoriesOpen(false);
       }
     };
     window.addEventListener("keydown", handleEscape);
     return () => window.removeEventListener("keydown", handleEscape);
+  }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
   }, []);
 
   const handleStoreSelect = useCallback((store) => {
@@ -154,18 +192,20 @@ function Navbar() {
               <div
                 key={link.name}
                 className="relative"
-                onMouseEnter={() =>
-                  link.hasMegaMenu && setIsCategoriesHovered(true)
-                }
-                onMouseLeave={() =>
-                  link.hasMegaMenu && setIsCategoriesHovered(false)
-                }
+                onMouseEnter={() => link.hasMegaMenu && openMegaMenu()}
+                onMouseLeave={() => link.hasMegaMenu && closeMegaMenu()}
               >
                 <a
                   href={link.href}
-                  onClick={() => setActiveNavItem(link.name)}
-                  className={`relative flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                    activeNavItem === link.name
+                  onClick={(e) => {
+                    if (link.hasMegaMenu) {
+                      toggleMegaMenu(e);
+                    }
+                    setActiveNavItem(link.name);
+                  }}
+                  className={`relative flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                    activeNavItem === link.name ||
+                    (link.hasMegaMenu && isCategoriesOpen)
                       ? "bg-blue-50 text-primary"
                       : "text-slate-600 hover:bg-blue-50 hover:text-primary"
                   }`}
@@ -174,7 +214,7 @@ function Navbar() {
                   {link.hasMegaMenu && (
                     <span
                       className={`material-symbols-outlined text-base transition-transform duration-200 ${
-                        isCategoriesHovered ? "rotate-180" : ""
+                        isCategoriesOpen ? "rotate-180" : ""
                       }`}
                     >
                       expand_more
@@ -185,7 +225,7 @@ function Navbar() {
                       {link.badge}
                     </span>
                   )}
-                  {activeNavItem === link.name && (
+                  {activeNavItem === link.name && !link.hasMegaMenu && (
                     <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-primary rounded-full" />
                   )}
                 </a>
@@ -239,12 +279,12 @@ function Navbar() {
         {/* Mega Menu - Positioned relative to header */}
         <div
           className="hidden lg:block"
-          onMouseEnter={() => setIsCategoriesHovered(true)}
-          onMouseLeave={() => setIsCategoriesHovered(false)}
+          onMouseEnter={openMegaMenu}
+          onMouseLeave={closeMegaMenu}
         >
           <MegaMenu
-            isOpen={isCategoriesHovered}
-            onClose={() => setIsCategoriesHovered(false)}
+            isOpen={isCategoriesOpen}
+            onClose={() => setIsCategoriesOpen(false)}
           />
         </div>
 
