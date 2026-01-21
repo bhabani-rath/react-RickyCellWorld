@@ -155,21 +155,13 @@ function Navbar() {
         >
           {/* Logo Section */}
           <a href="#" className="flex items-center gap-3 group">
-            <div className="relative">
-              <div
-                className={`flex items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0052A3] text-white font-extrabold transition-all duration-300 ${
-                  isCompact ? "w-9 h-9 text-base" : "w-10 h-10 text-lg"
-                }`}
-              >
-                R
-              </div>
-              {/* Verified badge */}
-              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-whatsapp rounded-full flex items-center justify-center border-2 border-white">
-                <span className="material-symbols-outlined text-white text-[10px] font-bold">
-                  check
-                </span>
-              </div>
-            </div>
+            <img
+              src="/logo.png"
+              alt="Ricky Cell World"
+              className={`transition-all duration-300 ${
+                isCompact ? "h-9" : "h-10"
+              }`}
+            />
             <div className="flex flex-col">
               <span
                 className={`font-extrabold text-slate-800 tracking-tight transition-all duration-300 ${
@@ -303,16 +295,7 @@ function Navbar() {
 
             {/* Logo */}
             <a href="#" className="flex items-center gap-2">
-              <div className="relative">
-                <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-gradient-to-br from-primary to-[#0052A3] text-white font-extrabold text-sm">
-                  R
-                </div>
-                <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-whatsapp rounded-full flex items-center justify-center border-2 border-white">
-                  <span className="material-symbols-outlined text-white text-[8px] font-bold">
-                    check
-                  </span>
-                </div>
-              </div>
+              <img src="/logo.png" alt="Ricky Cell World" className="h-8" />
               <span className="font-extrabold text-slate-800 text-base">
                 Ricky Cell
               </span>
