@@ -68,7 +68,7 @@ function MobileMenu({
         <div className="flex items-center justify-between px-5 h-16 border-b border-slate-100">
           <a href="#" className="flex items-center gap-2">
             <div className="relative">
-              <div className="w-9 h-9 flex items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#0052A3] text-white font-extrabold text-base">
+              <div className="w-9 h-9 flex items-center justify-center rounded-xl bg-linear-to-br from-primary to-[#0052A3] text-white font-extrabold text-base">
                 R
               </div>
               <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-whatsapp rounded-full flex items-center justify-center border-2 border-white">
@@ -180,7 +180,7 @@ function MobileMenu({
                     </div>
                     <span className="font-semibold">{link.name}</span>
                     {link.badge && (
-                      <span className="px-2 py-0.5 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] font-bold rounded-full">
+                      <span className="px-2 py-0.5 bg-linear-to-r from-red-500 to-red-600 text-white text-[10px] font-bold rounded-full">
                         {link.badge}
                       </span>
                     )}
@@ -235,7 +235,7 @@ function MobileMenu({
             href="https://wa.me/919876543210"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full h-13 bg-gradient-to-r from-whatsapp to-[#1FAD54] text-white font-semibold rounded-xl shadow-lg shadow-whatsapp/30 hover:shadow-xl hover:shadow-whatsapp/40 transition-all duration-200"
+            className="flex items-center justify-center gap-2 w-full h-13 bg-linear-to-r from-whatsapp to-[#1FAD54] text-white font-semibold rounded-xl shadow-lg shadow-whatsapp/30 hover:shadow-xl hover:shadow-whatsapp/40 transition-all duration-200"
           >
             <span className="material-symbols-outlined text-xl">chat</span>
             <span>Chat with us on WhatsApp</span>

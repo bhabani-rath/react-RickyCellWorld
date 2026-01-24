@@ -1,4 +1,4 @@
-import ProductCard from "../ui/ProductCard";
+import ProductCard from "../../components/ui/ProductCard";
 
 const products = [
   {

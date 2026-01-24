@@ -34,11 +34,11 @@ const heroSlides = [
     description:
       "Energy-efficient inverter ACs from top brands. Up to 5-star ratings with instant cooling technology.",
     image:
-      "https://images.unsplash.com/photo-1631567091046-8d4b1e0a5a3c?w=800&q=80",
+      "/images/ac.png",
     productName: "Daikin Inverter AC",
     productTagline: "Whisper quiet. Ultra efficient.",
   },
-  {
+  { 
     id: 4,
     badge: "Trending",
     title: "Power Your",
@@ -104,7 +104,7 @@ function Hero() {
 
   return (
     <section className="relative bg-white overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-white opacity-50"></div>
+      <div className="absolute inset-0 bg-linear-to-r from-blue-50 to-white opacity-50"></div>
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
@@ -184,7 +184,7 @@ function Hero() {
             ))}
 
             {/* Gradient overlay */}
-            <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 via-black/30 to-transparent h-1/2" />
+            <div className="absolute bottom-0 left-0 w-full bg-linear-to-t from-black/70 via-black/30 to-transparent h-1/2" />
 
             {/* Product info */}
             <div

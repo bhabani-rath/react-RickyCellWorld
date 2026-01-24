@@ -213,7 +213,7 @@ function Navbar() {
                     </span>
                   )}
                   {link.badge && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-gradient-to-br from-red-500 to-red-600 text-white text-[10px] font-bold rounded-full">
+                    <span className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-linear-to-br from-red-500 to-red-600 text-white text-[10px] font-bold rounded-full">
                       {link.badge}
                     </span>
                   )}
@@ -260,7 +260,7 @@ function Navbar() {
             {/* Call CTA */}
             <a
               href="tel:+919876543210"
-              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-[#0052A3] text-white rounded-xl font-semibold text-sm shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:scale-[1.02] transition-all duration-200"
+              className="flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-primary to-[#0052A3] text-white rounded-xl font-semibold text-sm shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:scale-[1.02] transition-all duration-200"
             >
               <span className="material-symbols-outlined text-lg">call</span>
               <span>Call Now</span>

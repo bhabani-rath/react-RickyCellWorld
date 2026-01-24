@@ -1,4 +1,4 @@
-import WhatsAppButton from "../ui/WhatsAppButton";
+import WhatsAppButton from "../../components/ui/WhatsAppButton";
 
 function Categories() {
   return (
@@ -36,7 +36,7 @@ function Categories() {
                   "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDTgg8OkiFGwQBIrNBzUP-ZzLye7ZfViM9aOOOViOcGw073thlRIyIVV0hntsabeC5zFf76bR2PgNv9AYSILsn7QtpZ_zGRITiWBFIluVe6ozullGqkOfI6eK1vlqTB0oMDtLIphIvyo4GJT2DCK409wDAxtjk2ldPwVw9TjzZqiPzbTKRbx1HNm7y0a3zByHOMKRPbHqPRlITHoCNQe8yPx5DD1Mr3RXXhpDmP7Lqq_vZ7eMQMPkICJ9UZh-92szNEtZt3RwSgbcI')",
               }}
             ></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent"></div>
             <div className="absolute bottom-0 left-0 p-8">
               <h3 className="text-white text-2xl font-bold mb-1">
                 Mobile Phones
@@ -59,7 +59,7 @@ function Categories() {
                   "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDdEm_dmjgE4I4Ubdpk_Z8GfPTfWRMXxA8l4nKxoUBPMtg_oEE-RqHd1xhrYpj_Qqyv9CvBTfgN7TsJ33jrmyiLnhsUtwLQZ9dbx7yD41BbgVKwwsnfjN8uj0Jc6wCpiOrl9N5jBFJHoe2WAdMWd1Hw3WUabPsp801cyMKQMRxj_QzlnGQHzR0VrZYhPOzVOEMu7TATjg_vv8yEFHuxS1AQTGtlCmntB8Z7H--nm9fKUfQqiBhMCNt7Mil3OWUscVtBdwYu0JgtTUw')",
               }}
             ></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div>
+            <div className="absolute inset-0 bg-linear-to-r from-black/70 to-transparent"></div>
             <div className="absolute bottom-0 left-0 p-6">
               <h3 className="text-white text-xl font-bold mb-1">
                 Laptops & Computers
