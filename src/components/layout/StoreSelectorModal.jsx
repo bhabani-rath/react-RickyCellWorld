@@ -68,55 +68,91 @@ function StoreSelectorModal({
     store.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Get current location with HIGH ACCURACY (uses GPS)
-  const handleUseLocation = () => {
-    if (!navigator.geolocation) {
-      setLocationError("Geolocation is not supported by your browser.");
-      return;
+  // Get location using IP API (fallback for accurate city-level location)
+  const getIPLocation = async () => {
+    try {
+      console.log("📡 Fetching IP-based location...");
+      const response = await fetch("http://ip-api.com/json/?fields=status,message,lat,lon,city,regionName");
+      const data = await response.json();
+      
+      if (data.status === "success") {
+        console.log("✅ IP Location:", data.city, data.regionName, data.lat, data.lon);
+        return {
+          lat: data.lat,
+          lng: data.lon,
+          city: data.city,
+          region: data.regionName
+        };
+      }
+      return null;
+    } catch (error) {
+      console.log("❌ IP API error:", error);
+      return null;
     }
-    
+  };
+
+  // Get current location - tries GPS first, then IP geolocation
+  const handleUseLocation = async () => {
     setIsLocating(true);
     setLocationError("");
     
-    console.log("Requesting HIGH ACCURACY location (GPS)...");
-    
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        console.log("✅ Location received:", position.coords.latitude, position.coords.longitude);
-        console.log("Accuracy:", position.coords.accuracy, "meters");
-        setUserLocation({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        });
-        setIsLocating(false);
-      },
-      (error) => {
-        console.log("❌ Location error:", error.code, error.message);
-        let errorMsg = "";
-        
-        switch(error.code) {
-          case 1: // PERMISSION_DENIED
-            errorMsg = "📍 Location access denied. Please click the lock icon in browser address bar → Allow location access → Try again.";
-            break;
-          case 2: // POSITION_UNAVAILABLE
-            errorMsg = "📍 Location unavailable. Please enable GPS/Location on your device.";
-            break;
-          case 3: // TIMEOUT
-            errorMsg = "📍 Location request timed out. Please try again.";
-            break;
-          default:
-            errorMsg = "📍 Unable to get location. Please try again.";
+    // Try browser geolocation first
+    if (navigator.geolocation) {
+      console.log("📍 Requesting GPS location...");
+      
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const accuracy = position.coords.accuracy;
+          console.log("✅ GPS Location received. Accuracy:", accuracy, "meters");
+          
+          // If accuracy is poor (>5km), use IP location instead
+          if (accuracy > 5000) {
+            console.log("⚠️ GPS accuracy poor, trying IP location...");
+            const ipLocation = await getIPLocation();
+            if (ipLocation) {
+              setUserLocation({ lat: ipLocation.lat, lng: ipLocation.lng });
+              setLocationError(`📍 Using IP location: ${ipLocation.city}, ${ipLocation.region}`);
+              setIsLocating(false);
+              return;
+            }
+          }
+          
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+          setIsLocating(false);
+        },
+        async (error) => {
+          console.log("❌ GPS failed:", error.code, error.message);
+          
+          // GPS failed, try IP geolocation as fallback
+          const ipLocation = await getIPLocation();
+          if (ipLocation) {
+            setUserLocation({ lat: ipLocation.lat, lng: ipLocation.lng });
+            setLocationError(`📍 GPS unavailable. Using IP location: ${ipLocation.city}, ${ipLocation.region}`);
+          } else {
+            setLocationError("📍 Unable to detect location. Please select your city manually below.");
+          }
+          setIsLocating(false);
+        },
+        { 
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
         }
-        
-        setLocationError(errorMsg);
-        setIsLocating(false);
-      },
-      { 
-        enableHighAccuracy: true, // Use GPS for accurate location
-        timeout: 15000, // Wait up to 15 seconds for GPS
-        maximumAge: 0 // Always get fresh location
+      );
+    } else {
+      // No GPS available, use IP location
+      const ipLocation = await getIPLocation();
+      if (ipLocation) {
+        setUserLocation({ lat: ipLocation.lat, lng: ipLocation.lng });
+        setLocationError(`📍 Using IP location: ${ipLocation.city}, ${ipLocation.region}`);
+      } else {
+        setLocationError("📍 Location not available. Please select your city manually below.");
       }
-    );
+      setIsLocating(false);
+    }
   };
 
   // Close on backdrop click
@@ -156,14 +192,14 @@ function StoreSelectorModal({
         ref={modalRef}
         role="dialog"
         aria-modal="true"
-        className="relative w-full max-w-[520px] bg-white rounded-3xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-[520px] max-h-[90vh] flex flex-col bg-white rounded-3xl shadow-2xl overflow-hidden"
       >
         {/* Header */}
-        <div className="px-6 pt-6 pb-4">
+        <div className="px-5 pt-5 pb-4 sm:px-6 sm:pt-6 shrink-0">
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h2 className="text-xl font-bold text-slate-900">Find a Store</h2>
-              <p className="text-sm text-slate-500 mt-0.5">
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900">Find a Store</h2>
+              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
                 {stores.length} stores available
               </p>
             </div>
@@ -186,15 +222,15 @@ function StoreSelectorModal({
                 placeholder="Search stores..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-11 pl-10 pr-4 bg-slate-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-10 sm:h-11 pl-10 pr-4 bg-slate-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <button
               onClick={handleUseLocation}
               disabled={isLocating}
-              className="h-11 px-4 flex items-center gap-2 bg-slate-900 text-white text-sm font-medium rounded-xl hover:bg-slate-800 disabled:opacity-50"
+              className="h-10 sm:h-11 px-3 sm:px-4 flex items-center gap-2 bg-slate-900 text-white text-xs sm:text-sm font-medium rounded-xl hover:bg-slate-800 disabled:opacity-50"
             >
-              <span className={`material-symbols-outlined text-lg ${isLocating ? 'animate-spin' : ''}`}>
+              <span className={`material-symbols-outlined text-base sm:text-lg ${isLocating ? 'animate-spin' : ''}`}>
                 {isLocating ? 'sync' : 'my_location'}
               </span>
               <span className="hidden sm:inline">{isLocating ? 'Finding...' : 'Near Me'}</span>
@@ -202,29 +238,65 @@ function StoreSelectorModal({
           </div>
           
           {locationError && (
-            <div className="mt-3 p-3 bg-red-50 rounded-xl flex items-center gap-2 text-red-600 text-sm">
-              <span className="material-symbols-outlined text-lg">error</span>
-              {locationError}
+            <div className="mt-3 p-3 bg-red-50 rounded-xl">
+              <div className="flex items-center gap-2 text-red-600 text-xs sm:text-sm">
+                <span className="material-symbols-outlined text-base sm:text-lg">error</span>
+                {locationError}
+              </div>
+              <p className="text-[10px] sm:text-xs text-red-500 mt-1 pl-6">
+                Or select your city manually below 👇
+              </p>
             </div>
           )}
           {userLocation && !locationError && (
             <div className="mt-3 p-3 bg-green-50 rounded-xl">
-              <div className="flex items-center gap-2 text-green-700 text-sm font-medium mb-1">
-                <span className="material-symbols-outlined text-lg">check_circle</span>
-                Location detected!
+              <div className="flex items-center gap-2 text-green-700 text-xs sm:text-sm font-medium mb-1">
+                <span className="material-symbols-outlined text-base sm:text-lg">check_circle</span>
+                Location set!
               </div>
-              <p className="text-xs text-green-600 pl-7">
-                📍 Your coordinates: {userLocation.lat.toFixed(4)}°N, {userLocation.lng.toFixed(4)}°E
-              </p>
-              <p className="text-xs text-green-600 pl-7 mt-1">
-                Stores sorted by distance from you
+              <p className="text-[10px] sm:text-xs text-green-600 pl-6">
+                Stores sorted by distance from your location
               </p>
             </div>
           )}
+          
+          {/* Manual city selection - Primary option */}
+          <div className="mt-3 p-3 sm:p-4 bg-blue-50 rounded-xl border border-blue-100">
+            <p className="text-xs sm:text-sm font-medium text-blue-900 mb-2 flex items-center gap-2">
+              <span className="material-symbols-outlined text-base sm:text-lg">location_city</span>
+              Select your city in Odisha:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { name: "Bhubaneswar", lat: 20.2961, lng: 85.8245 },
+                { name: "Cuttack", lat: 20.4625, lng: 85.8830 },
+                { name: "Puri", lat: 19.8135, lng: 85.8312 },
+                { name: "Nirakarpur", lat: 19.9913, lng: 85.5333 },
+                { name: "Khordha", lat: 20.1806, lng: 85.6186 },
+                { name: "Pipili", lat: 20.1167, lng: 85.8333 },
+                { name: "Jatni", lat: 20.1500, lng: 85.7000 },
+              ].map((city) => (
+                <button
+                  key={city.name}
+                  onClick={() => {
+                    setUserLocation({ lat: city.lat, lng: city.lng });
+                    setLocationError("");
+                  }}
+                  className={`px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all ${
+                    userLocation?.lat === city.lat 
+                      ? "bg-blue-600 text-white shadow-md" 
+                      : "bg-white text-slate-700 border border-slate-200 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700"
+                  }`}
+                >
+                  {city.name}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Store List */}
-        <div className="max-h-[45vh] overflow-y-auto px-4 pb-4 space-y-2">
+        <div className="flex-1 overflow-y-auto px-5 pb-5 sm:px-6 sm:pb-6 space-y-2 min-h-0">
           {filteredStores.length === 0 ? (
             <div className="py-12 text-center">
               <span className="material-symbols-outlined text-4xl text-slate-300">search_off</span>
@@ -239,7 +311,7 @@ function StoreSelectorModal({
                 <button
                   key={store.id}
                   onClick={() => onSelectStore(store)}
-                  className={`w-full p-4 rounded-2xl text-left transition-all ${
+                  className={`w-full p-3 sm:p-4 rounded-2xl text-left transition-all ${
                     isSelected
                       ? "bg-blue-50 ring-2 ring-blue-500"
                       : "bg-slate-50 hover:bg-slate-100"
@@ -247,7 +319,7 @@ function StoreSelectorModal({
                 >
                   <div className="flex gap-3">
                     {/* Radio */}
-                    <div className={`w-5 h-5 mt-0.5 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
+                    <div className={`w-5 h-5 mt-0.5 rounded-full border-2 shrink-0 flex items-center justify-center ${
                       isSelected ? "border-blue-500 bg-blue-500" : "border-slate-300"
                     }`}>
                       {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
@@ -256,7 +328,7 @@ function StoreSelectorModal({
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
-                        <span className="font-bold text-slate-900">{store.name}</span>
+                        <span className="font-bold text-slate-900 text-sm sm:text-base">{store.name}</span>
                         {store.isFlagship && (
                           <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[9px] font-bold rounded">
                             FLAGSHIP
@@ -269,20 +341,20 @@ function StoreSelectorModal({
                         </span>
                       </div>
                       
-                      <p className="text-sm text-slate-500 mb-2">{store.address}</p>
+                      <p className="text-xs sm:text-sm text-slate-500 mb-2">{store.address}</p>
                       
-                      <div className="flex items-center gap-3 text-xs text-slate-400">
+                      <div className="flex items-center gap-3 text-[10px] sm:text-xs text-slate-400">
                         <span className="flex items-center gap-1">
-                          <span className="material-symbols-outlined text-sm">call</span>
+                          <span className="material-symbols-outlined text-xs sm:text-sm">call</span>
                           {store.phone}
                         </span>
                         <span className="flex items-center gap-1">
-                          <span className="material-symbols-outlined text-sm">schedule</span>
+                          <span className="material-symbols-outlined text-xs sm:text-sm">schedule</span>
                           {store.hours}
                         </span>
                         {store.distance && (
                           <span className="flex items-center gap-1 text-blue-600 font-semibold">
-                            <span className="material-symbols-outlined text-sm">near_me</span>
+                            <span className="material-symbols-outlined text-xs sm:text-sm">near_me</span>
                             {store.distance}
                           </span>
                         )}
@@ -295,9 +367,9 @@ function StoreSelectorModal({
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-300 flex-shrink-0"
+                      className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-300 shrink-0"
                     >
-                      <span className="material-symbols-outlined">directions</span>
+                      <span className="material-symbols-outlined text-lg sm:text-xl">directions</span>
                     </a>
                   </div>
                 </button>
@@ -307,22 +379,22 @@ function StoreSelectorModal({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-slate-50 border-t border-slate-100">
-          <div className="flex items-center gap-2 text-sm text-slate-600 mb-3">
+        <div className="px-5 py-4 sm:px-6 bg-slate-50 border-t border-slate-100 shrink-0">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 mb-3">
             <span className="material-symbols-outlined text-blue-500">storefront</span>
             <span>Selected:</span>
-            <span className="font-semibold text-slate-900">{selectedStore.name}</span>
+            <span className="font-semibold text-slate-900 truncate">{selectedStore.name}</span>
           </div>
           <div className="flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 h-12 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50"
+              className="flex-1 h-10 sm:h-12 text-xs sm:text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50"
             >
               Cancel
             </button>
             <button
               onClick={onClose}
-              className="flex-1 h-12 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700"
+              className="flex-1 h-10 sm:h-12 bg-blue-600 text-white text-xs sm:text-sm font-semibold rounded-xl hover:bg-blue-700"
             >
               Confirm Store
             </button>
