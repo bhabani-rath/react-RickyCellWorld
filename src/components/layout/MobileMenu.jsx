@@ -229,6 +229,17 @@ function MobileMenu({
           </button>
         </div>
 
+        {/* Login Button */}
+        <div className="px-4 py-3 border-t border-slate-100">
+          <a
+            href="/login"
+            className="flex items-center justify-center gap-2 w-full h-12 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-800 transition-all duration-200"
+          >
+            <span className="material-symbols-outlined text-xl">login</span>
+            <span>Owner / Manager Login</span>
+          </a>
+        </div>
+
         {/* WhatsApp CTA */}
         <div className="p-4 border-t border-slate-100">
           <a
