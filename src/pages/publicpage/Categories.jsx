@@ -85,8 +85,8 @@ function Categories() {
               {/* Gradient Overlay */}
               <div className={`absolute inset-0 ${
                 category.size === "medium" 
-                  ? "bg-gradient-to-r from-black/70 via-black/40 to-transparent" 
-                  : "bg-gradient-to-t from-black/80 via-black/20 to-transparent"
+                  ? "bg-linear-to-r from-black/70 via-black/40 to-transparent" 
+                  : "bg-linear-to-t from-black/80 via-black/20 to-transparent"
               }`}></div>
               
               {/* Content */}
@@ -105,7 +105,7 @@ function Categories() {
               key={category.slug}
               onClick={() => handleCategoryClick(category.slug)}
               className={`group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 min-h-[160px] cursor-pointer ${
-                category.highlight ? "bg-gradient-to-br from-primary to-primary-700" : ""
+                category.highlight ? "bg-linear-to-br from-primary to-primary-700" : ""
               }`}
             >
               {/* Background Image - only for non-highlighted items */}

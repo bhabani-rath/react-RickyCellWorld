@@ -4,8 +4,8 @@ const products = [
   {
     name: "Samsung Galaxy S24 Ultra",
     variant: "512GB • Titanium Gray",
-    price: "$1,299.00",
-    originalPrice: "$1,499.00",
+    price: "₹1,299.00",
+    originalPrice: "₹1,499.00",
     inStock: true,
     image:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuBaXG83oWsH9tC_NS5ykDjMBgY-kEjI7CCDoPAO3NaROkynK-bPKdruAzGO0FOrCqfHCUmGeBiWZAgB8iT3IzScTyJ0xRbTaQMv01O8T7Fe3H5IYr4eyvDjMHirAE_q_bvyibq9CfQWuARIKeMTxqLIyXmFOF84AzQxKRuvAjcX_hv0NE0yaY-JwR1lF7t7deAUKXvuZSJUqdfqaYtjSopNC3ozDCKW1iMmdAVUTncpk3Vjrv9y0ZfSxOib-EE6PL5nLtKNl51Kjo4",
@@ -13,7 +13,7 @@ const products = [
   {
     name: 'MacBook Air 15" M2',
     variant: "256GB • Midnight",
-    price: "$1,199.00",
+    price: "₹1,199.00",
     originalPrice: null,
     inStock: true,
     image:
@@ -22,7 +22,7 @@ const products = [
   {
     name: "Apple Watch Series 9",
     variant: "GPS • 45mm • Starlight",
-    price: "$399.00",
+    price: "₹399.00",
     originalPrice: null,
     inStock: false,
     image:
@@ -31,7 +31,7 @@ const products = [
   {
     name: "Sony PlayStation 5",
     variant: "Slim Edition • Disc Version",
-    price: "$499.00",
+    price: "₹499.00",
     originalPrice: null,
     inStock: true,
     image:

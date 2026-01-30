@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useStore } from "../../context/StoreContext";
+import { useInventory } from "../../context/InventoryContext";
 import MegaMenu from "./MegaMenu";
 import MobileMenu from "./MobileMenu";
 import SearchOverlay from "./SearchOverlay";
 import StoreSelectorModal from "./StoreSelectorModal";
+import { storeLocations as stores } from "../../data/products";
 
 // Navigation links data
 const navLinks = [
@@ -13,52 +16,17 @@ const navLinks = [
   { name: "Contact", href: "#contact", icon: "call" },
 ];
 
-// Stores data
-const stores = [
-  {
-    id: "nirakarpur",
-    name: "Nirakarpur",
-    isFlagship: true,
-    address: "Main Road, Nirakarpur, Odisha - 752077",
-    phone: "+91 98765 43210",
-    hours: "10AM - 9PM",
-    mapUrl: "https://maps.google.com/?q=Nirakarpur+Odisha",
-  },
-  {
-    id: "mandarabasta",
-    name: "Mandarabasta",
-    isFlagship: false,
-    address: "Market Complex, Mandarabasta, Odisha",
-    phone: "+91 98765 43211",
-    hours: "10AM - 9PM",
-    mapUrl: "https://maps.google.com/?q=Mandarabasta+Odisha",
-  },
-  {
-    id: "ghoradia",
-    name: "Ghoradia",
-    isFlagship: false,
-    address: "Near Bus Stand, Ghoradia, Odisha",
-    phone: "+91 98765 43212",
-    hours: "10AM - 8PM",
-    mapUrl: "https://maps.google.com/?q=Ghoradia+Odisha",
-  },
-  {
-    id: "jatnai",
-    name: "Jatnai",
-    isFlagship: false,
-    address: "Station Road, Jatnai, Odisha",
-    phone: "+91 98765 43213",
-    hours: "10AM - 9PM",
-    mapUrl: "https://maps.google.com/?q=Jatnai+Odisha",
-  },
-];
+
+// Stores data is now imported from ../../data/products
+
 
 function Navbar() {
   const [isCompact, setIsCompact] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isStoreModalOpen, setIsStoreModalOpen] = useState(false);
-  const [selectedStore, setSelectedStore] = useState(stores[0]);
+  const { selectedStore, setSelectedStore } = useStore();
+  const { user, logout } = useInventory();
   const [activeNavItem, setActiveNavItem] = useState("Home");
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
 
@@ -257,14 +225,44 @@ function Navbar() {
               </span>
             </button>
 
-            {/* Call CTA */}
-            <a
-              href="tel:+919876543210"
-              className="flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-primary to-[#0052A3] text-white rounded-xl font-semibold text-sm shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:scale-[1.02] transition-all duration-200"
-            >
-              <span className="material-symbols-outlined text-lg">call</span>
-              <span>Call Now</span>
-            </a>
+            {/* User Actions */}
+            {user ? (
+              <div className="flex items-center gap-3">
+                <a
+                  href="/admin"
+                  className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-sm transition-all duration-200"
+                >
+                  <span className="material-symbols-outlined text-lg">dashboard</span>
+                  <span>Admin</span>
+                </a>
+                <button
+                  onClick={logout}
+                  className="flex items-center gap-2 px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl font-semibold text-sm transition-all duration-200"
+                >
+                  <span className="material-symbols-outlined text-lg">logout</span>
+                  <span className="hidden sm:inline">Logout</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <a
+                  href="/login"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:scale-[1.02] transition-all duration-200"
+                >
+                  <span className="material-symbols-outlined text-lg">login</span>
+                  <span>Login</span>
+                </a>
+                
+                {/* Call CTA - Only show when not logged in or on larger screens */}
+                <a
+                  href="tel:+919876543210"
+                  className="hidden xl:flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white rounded-xl font-semibold text-sm shadow-lg shadow-slate-800/30 hover:shadow-xl hover:shadow-slate-800/40 hover:scale-[1.02] transition-all duration-200"
+                >
+                  <span className="material-symbols-outlined text-lg">call</span>
+                  <span>Call Now</span>
+                </a>
+              </div>
+            )}
           </div>
         </nav>
 

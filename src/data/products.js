@@ -276,7 +276,40 @@ export const brands = [
 
 // Store locations
 export const storeLocations = [
-  { id: "downtown", name: "Downtown Branch" },
-  { id: "westside", name: "Westside Mall" },
-  { id: "eastside", name: "Eastside Plaza" },
+  {
+    id: "nirakarpur",
+    name: "Nirakarpur",
+    isFlagship: true,
+    address: "Main Road, Nirakarpur, Odisha - 752077",
+    phone: "+91 98765 43210",
+    hours: "10AM - 9PM",
+    mapUrl: "https://maps.google.com/?q=Nirakarpur+Odisha",
+  },
+  {
+    id: "mandarabasta",
+    name: "Mandarabasta",
+    isFlagship: false,
+    address: "Market Complex, Mandarabasta, Odisha",
+    phone: "+91 98765 43211",
+    hours: "10AM - 9PM",
+    mapUrl: "https://maps.google.com/?q=Mandarabasta+Odisha",
+  },
+  {
+    id: "ghoradia",
+    name: "Ghoradia",
+    isFlagship: false,
+    address: "Near Bus Stand, Ghoradia, Odisha",
+    phone: "+91 98765 43212",
+    hours: "10AM - 8PM",
+    mapUrl: "https://maps.google.com/?q=Ghoradia+Odisha",
+  },
+  {
+    id: "jatnai",
+    name: "Jatnai",
+    isFlagship: false,
+    address: "Station Road, Jatnai, Odisha",
+    phone: "+91 98765 43213",
+    hours: "10AM - 9PM",
+    mapUrl: "https://maps.google.com/?q=Jatnai+Odisha",
+  },
 ];

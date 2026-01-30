@@ -1,4 +1,7 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { StoreProvider } from "./context/StoreContext";
+import { ProductProvider } from "./context/ProductContext";
+import { InventoryProvider } from "./context/InventoryContext";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import Hero from "./pages/publicpage/Hero";
@@ -7,6 +10,14 @@ import Categories from "./pages/publicpage/Categories";
 import FeaturedProducts from "./pages/publicpage/FeaturedProducts";
 import CategoryListingPage from "./pages/publicpage/CategoryListingPage";
 import ProductDetailPage from "./pages/publicpage/ProductDetailPage";
+import LoginPage from "./pages/auth/LoginPage";
+
+// Admin Components
+import AdminLayout from "./components/admin/AdminLayout";
+import DashboardPage from "./pages/admin/DashboardPage";
+import ProductsPage from "./pages/admin/ProductsPage";
+import InventoryOverviewPage from "./pages/Inventory/InventoryOverviewPage";
+import StockTransferPage from "./pages/Inventory/StockTransferPage";
 
 // Home page component
 function HomePage() {
@@ -20,17 +31,61 @@ function HomePage() {
   );
 }
 
-function App() {
+// Public layout wrapper
+function PublicLayout({ children }) {
   return (
     <div className="min-h-screen bg-background-light font-display text-slate-900 antialiased overflow-x-hidden">
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/category" element={<CategoryListingPage />} />
-        <Route path="/product/:id" element={<ProductDetailPage />} />
-      </Routes>
+      <StoreProvider>
+        <Navbar />
+        {children}
+      </StoreProvider>
       <Footer />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <InventoryProvider>
+      <ProductProvider>
+        <Routes>
+          {/* Public Routes */}
+          <Route
+            path="/"
+            element={
+              <PublicLayout>
+                <HomePage />
+              </PublicLayout>
+            }
+          />
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/category"
+            element={
+              <PublicLayout>
+                <CategoryListingPage />
+              </PublicLayout>
+            }
+          />
+          <Route
+            path="/product/:id"
+            element={
+              <PublicLayout>
+                <ProductDetailPage />
+              </PublicLayout>
+            }
+          />
+
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<DashboardPage />} />
+            <Route path="products" element={<ProductsPage />} />
+            <Route path="inventory" element={<InventoryOverviewPage />} />
+            <Route path="inventory/transfer" element={<StockTransferPage />} />
+          </Route>
+        </Routes>
+      </ProductProvider>
+    </InventoryProvider>
   );
 }
 

@@ -1,11 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { products, categories } from "../../data/products";
+import { useStore } from "../../context/StoreContext";
+import { useProducts } from "../../context/ProductContext";
 import ProductCard from "../../components/ui/ProductCard";
 import FilterSidebar from "../../components/ui/FilterSidebar";
 
 function CategoryListingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { products, categories } = useProducts();
   
   // Get initial category from URL
   const initialCategory = searchParams.get("category") || null;
@@ -14,7 +16,8 @@ function CategoryListingPage() {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [priceRange, setPriceRange] = useState([0, 2000]);
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const { selectedStore } = useStore();
+  const [selectedLocation, setSelectedLocation] = useState(selectedStore?.id || null);
   const [availability, setAvailability] = useState([]);
   const [minRating, setMinRating] = useState(0);
   const [minDiscount, setMinDiscount] = useState(0);
@@ -30,6 +33,13 @@ function CategoryListingPage() {
       setSearchParams({});
     }
   }, [selectedCategory, setSearchParams]);
+
+  // Sync Global Store Selection with Filter
+  useEffect(() => {
+    if (selectedStore) {
+      setSelectedLocation(selectedStore.id);
+    }
+  }, [selectedStore]);
 
   // Get current category name for breadcrumb
   const currentCategoryName = useMemo(() => {

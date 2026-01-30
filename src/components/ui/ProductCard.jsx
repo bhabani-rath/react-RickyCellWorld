@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 function ProductCard({ product }) {
   const whatsappMessage = encodeURIComponent(
-    `Hi! I'm interested in ${product.name} priced at $${product.price}. Is it available?`
+    `Hi! I'm interested in ${product.name} priced at ₹${product.price}. Is it available?`
   );
   const whatsappLink = `https://wa.me/919876543210?text=${whatsappMessage}`;
 
@@ -67,11 +67,11 @@ function ProductCard({ product }) {
         {/* Price Section */}
         <div className="flex items-baseline gap-2 mb-4">
           <p className="text-xl font-bold text-slate-900">
-            ${product.price.toLocaleString()}
+            ₹{product.price.toLocaleString()}
           </p>
           {product.originalPrice && (
             <p className="text-sm text-slate-400 line-through">
-              ${product.originalPrice.toLocaleString()}
+              ₹{product.originalPrice.toLocaleString()}
             </p>
           )}
         </div>
