@@ -24,11 +24,6 @@ function InventoryOverviewPage() {
   const [updateModalItem, setUpdateModalItem] = useState(null);
   const [showAIInsights, setShowAIInsights] = useState(true);
 
-  // Simulate initial load
-  useEffect(() => {
-    simulateLoading(600);
-  }, []);
-
   // Enrich inventory items with product data
   const enrichedItems = useMemo(() => {
     return inventoryItems.map((item) => {
