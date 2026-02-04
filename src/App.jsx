@@ -4,10 +4,14 @@ import { ProductProvider } from "./context/ProductContext";
 import { InventoryProvider } from "./context/InventoryContext";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
+
+// Public Page Components
 import Hero from "./pages/publicpage/Hero";
-import Features from "./pages/publicpage/Features";
+import BankOffersBar from "./pages/publicpage/BankOffersBar";
 import Categories from "./pages/publicpage/Categories";
 import FeaturedProducts from "./pages/publicpage/FeaturedProducts";
+import BrandShowcase from "./pages/publicpage/BrandShowcase";
+import TrustBadges from "./pages/publicpage/TrustBadges";
 import CategoryListingPage from "./pages/publicpage/CategoryListingPage";
 import ProductDetailPage from "./pages/publicpage/ProductDetailPage";
 import LoginPage from "./pages/auth/LoginPage";
@@ -19,14 +23,16 @@ import ProductsPage from "./pages/admin/ProductsPage";
 import InventoryOverviewPage from "./pages/Inventory/InventoryOverviewPage";
 import StockTransferPage from "./pages/Inventory/StockTransferPage";
 
-// Home page component
+// Home page component - VijaysSales Style
 function HomePage() {
   return (
     <>
       <Hero />
-      <Features />
+      <BankOffersBar />
       <Categories />
       <FeaturedProducts />
+      <BrandShowcase />
+      <TrustBadges />
     </>
   );
 }
