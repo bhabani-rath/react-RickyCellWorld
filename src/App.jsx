@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { StoreProvider } from "./context/StoreContext";
 import { ProductProvider } from "./context/ProductContext";
 import { InventoryProvider } from "./context/InventoryContext";
+import { CartProvider } from "./context/CartContext";
+import { ShowcaseProvider } from "./context/ShowcaseContext";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 
@@ -20,6 +22,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import AdminLayout from "./components/admin/AdminLayout";
 import DashboardPage from "./pages/admin/DashboardPage";
 import ProductsPage from "./pages/admin/ProductsPage";
+import ShowcasePage from "./pages/admin/ShowcasePage";
 import InventoryOverviewPage from "./pages/Inventory/InventoryOverviewPage";
 import StockTransferPage from "./pages/Inventory/StockTransferPage";
 
@@ -52,8 +55,10 @@ function PublicLayout({ children }) {
 
 function App() {
   return (
+    <CartProvider>
     <InventoryProvider>
       <ProductProvider>
+        <ShowcaseProvider>
         <Routes>
           {/* Public Routes */}
           <Route
@@ -86,12 +91,15 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<DashboardPage />} />
             <Route path="products" element={<ProductsPage />} />
+            <Route path="showcase" element={<ShowcasePage />} />
             <Route path="inventory" element={<InventoryOverviewPage />} />
             <Route path="inventory/transfer" element={<StockTransferPage />} />
           </Route>
         </Routes>
+        </ShowcaseProvider>
       </ProductProvider>
     </InventoryProvider>
+    </CartProvider>
   );
 }
 

@@ -1,12 +1,16 @@
 import { useProducts } from "../../context/ProductContext";
 import { useInventory } from "../../context/InventoryContext";
+import { useShowcase } from "../../context/ShowcaseContext";
+import { ROLES } from "../../data/inventory";
 import { Link } from "react-router-dom";
 
 function DashboardPage() {
   const { stats } = useProducts();
-  const { stockAlerts, transfers } = useInventory();
+  const { stockAlerts, transfers, currentRole } = useInventory();
+  const { showcaseCount } = useShowcase();
 
   const pendingTransfers = transfers.filter((t) => t.status === "pending").length;
+  const isOwner = currentRole === ROLES.OWNER;
 
   return (
     <div className="space-y-6">
@@ -160,6 +164,50 @@ function DashboardPage() {
               Review Now
             </Link>
           </div>
+        </div>
+      )}
+
+      {/* Owner Insights - Only visible to Owner */}
+      {isOwner && (
+        <div className="bg-linear-to-r from-purple-50 via-indigo-50 to-blue-50 rounded-xl border border-purple-200 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                <span className="material-symbols-outlined text-purple-600">insights</span>
+              </div>
+              <h2 className="text-lg font-bold text-slate-900">Owner Insights</h2>
+            </div>
+            <span className="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">
+              Owner Only
+            </span>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div className="bg-white/60 rounded-lg p-4 border border-white">
+              <p className="text-2xl font-bold text-purple-600">{showcaseCount}</p>
+              <p className="text-sm text-slate-600">Showcase Products</p>
+            </div>
+            <div className="bg-white/60 rounded-lg p-4 border border-white">
+              <p className="text-2xl font-bold text-blue-600">{stats.totalProducts}</p>
+              <p className="text-sm text-slate-600">Total Inventory</p>
+            </div>
+            <div className="bg-white/60 rounded-lg p-4 border border-white">
+              <p className="text-2xl font-bold text-green-600">₹{(stats.totalValue / 1000).toFixed(1)}K</p>
+              <p className="text-sm text-slate-600">Catalog Value</p>
+            </div>
+            <div className="bg-white/60 rounded-lg p-4 border border-white">
+              <p className="text-2xl font-bold text-amber-600">{pendingTransfers}</p>
+              <p className="text-sm text-slate-600">Pending Actions</p>
+            </div>
+          </div>
+
+          <Link
+            to="/admin/showcase"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors"
+          >
+            <span className="material-symbols-outlined text-lg">featured_play_list</span>
+            Manage Showcase
+          </Link>
         </div>
       )}
 

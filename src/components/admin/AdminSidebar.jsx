@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useInventory } from "../../context/InventoryContext";
+import { ROLES } from "../../data/inventory";
 
 const navigation = [
   {
@@ -12,6 +13,12 @@ const navigation = [
     name: "Products",
     href: "/admin/products",
     icon: "inventory_2",
+  },
+  {
+    name: "Showcase",
+    href: "/admin/showcase",
+    icon: "featured_play_list",
+    ownerOnly: true,
   },
   {
     name: "Stock Overview",
@@ -27,10 +34,11 @@ const navigation = [
 ];
 
 function AdminSidebar({ isOpen, onClose }) {
-  const { permissions, stockAlerts } = useInventory();
+  const { permissions, stockAlerts, currentRole } = useInventory();
 
   const filteredNav = navigation.filter((item) => {
     if (item.requiresTransfer && !permissions.canTransfer) return false;
+    if (item.ownerOnly && currentRole !== ROLES.OWNER) return false;
     return true;
   });
 

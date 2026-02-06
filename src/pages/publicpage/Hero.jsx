@@ -193,9 +193,7 @@ function Hero() {
                </span>
                {slide.badge}
              </span>
-             <span className="hidden sm:inline-flex items-center text-xs font-semibold text-slate-500 bg-white/60 backdrop-blur-sm px-3 py-1.5 rounded-full border border-slate-200">
-               Free Delivery Available
-             </span>
+          
            </div>
 
            {/* Title with Gradient Text Option */}
