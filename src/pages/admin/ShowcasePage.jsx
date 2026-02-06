@@ -375,23 +375,28 @@ function ShowcasePage() {
                         </div>
 
                         {/* Schedule Section */}
-                        <div className="pt-2 border-t border-slate-100">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="material-symbols-outlined text-sm text-slate-400">schedule</span>
-                            <label className="text-xs font-medium text-slate-500">Schedule (Optional)</label>
+                        <div className="pt-3 mt-3 border-t border-slate-100">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="w-6 h-6 bg-blue-50 rounded-full flex items-center justify-center">
+                              <span className="material-symbols-outlined text-sm text-blue-500">schedule</span>
+                            </div>
+                            <label className="text-xs font-semibold text-slate-600">Schedule</label>
                             {/* Status badge */}
                             {(() => {
                               const statusInfo = getShowcaseStatus(showcaseItem);
                               return (
-                                <span className={`px-2 py-0.5 text-xs font-medium rounded ml-auto ${statusInfo.color}`}>
+                                <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ml-auto ${statusInfo.color}`}>
                                   {statusInfo.label}
                                 </span>
                               );
                             })()}
                           </div>
-                          <div className="grid grid-cols-2 gap-2">
-                            <div>
-                              <label className="text-xs text-slate-400 block mb-1">Start</label>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="relative">
+                              <label className="text-xs font-medium text-slate-500 mb-1.5 flex items-center gap-1">
+                                <span className="material-symbols-outlined text-xs text-green-500">play_arrow</span>
+                                Start Date
+                              </label>
                               <input
                                 type="datetime-local"
                                 value={formatDateForInput(showcaseItem.startDate)}
@@ -400,11 +405,14 @@ function ShowcasePage() {
                                     startDate: e.target.value ? new Date(e.target.value).toISOString() : null 
                                   })
                                 }
-                                className="w-full px-2 py-1.5 bg-slate-50 border-0 rounded-lg text-xs focus:ring-2 focus:ring-primary"
+                                className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:ring-2 focus:ring-primary focus:border-primary hover:border-slate-300 transition-colors cursor-pointer"
                               />
                             </div>
-                            <div>
-                              <label className="text-xs text-slate-400 block mb-1">End</label>
+                            <div className="relative">
+                              <label className="text-xs font-medium text-slate-500 mb-1.5 flex items-center gap-1">
+                                <span className="material-symbols-outlined text-xs text-red-500">stop</span>
+                                End Date
+                              </label>
                               <input
                                 type="datetime-local"
                                 value={formatDateForInput(showcaseItem.endDate)}
@@ -413,11 +421,12 @@ function ShowcasePage() {
                                     endDate: e.target.value ? new Date(e.target.value).toISOString() : null 
                                   })
                                 }
-                                className="w-full px-2 py-1.5 bg-slate-50 border-0 rounded-lg text-xs focus:ring-2 focus:ring-primary"
+                                className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:ring-2 focus:ring-primary focus:border-primary hover:border-slate-300 transition-colors cursor-pointer"
                               />
                             </div>
                           </div>
-                          <p className="text-xs text-slate-400 mt-1">
+                          <p className="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                            <span className="material-symbols-outlined text-xs">info</span>
                             Leave empty for always active
                           </p>
                         </div>
