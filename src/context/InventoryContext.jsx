@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useMemo, useCallback } from "react";
+  import { createContext, useContext, useState, useMemo, useCallback, useEffect } from "react";
 import {
   ROLES,
   generateInventoryItems,
@@ -15,15 +15,27 @@ const InventoryContext = createContext();
 export function InventoryProvider({ children }) {
   // ============ STATE ============
   
-  // Role simulation
-  const [currentRole, setCurrentRole] = useState(null); // Default to null (Guest)
-  const [user, setUser] = useState(null); // Current logged in user info
+  // Role simulation - persist to localStorage
+  const [currentRole, setCurrentRole] = useState(() => {
+    const saved = localStorage.getItem('rcw_currentRole');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('rcw_user');
+    return saved ? JSON.parse(saved) : null;
+  });
   
   // For Store Manager, which store they manage
-  const [managedStoreId, setManagedStoreId] = useState(null);
+  const [managedStoreId, setManagedStoreId] = useState(() => {
+    const saved = localStorage.getItem('rcw_managedStoreId');
+    return saved ? JSON.parse(saved) : null;
+  });
   
   // Currently selected store for viewing (Owner can switch)
-  const [selectedStoreId, setSelectedStoreId] = useState(null); // null = all stores
+  const [selectedStoreId, setSelectedStoreId] = useState(() => {
+    const saved = localStorage.getItem('rcw_selectedStoreId');
+    return saved ? JSON.parse(saved) : null;
+  });
   
   // Inventory data
   const [inventoryItems, setInventoryItems] = useState(() => generateInventoryItems());
@@ -32,6 +44,23 @@ export function InventoryProvider({ children }) {
   
   // Loading state
   const [isLoading, setIsLoading] = useState(false);
+
+  // ============ PERSIST SESSION ============
+  useEffect(() => {
+    localStorage.setItem('rcw_currentRole', JSON.stringify(currentRole));
+  }, [currentRole]);
+
+  useEffect(() => {
+    localStorage.setItem('rcw_user', JSON.stringify(user));
+  }, [user]);
+
+  useEffect(() => {
+    localStorage.setItem('rcw_managedStoreId', JSON.stringify(managedStoreId));
+  }, [managedStoreId]);
+
+  useEffect(() => {
+    localStorage.setItem('rcw_selectedStoreId', JSON.stringify(selectedStoreId));
+  }, [selectedStoreId]);
 
   // ============ PERMISSIONS ============
   
@@ -92,6 +121,13 @@ export function InventoryProvider({ children }) {
       setUser({ name: "Store Manager", username: "manager", role: ROLES.STORE_MANAGER, storeId });
       return { success: true };
     }
+
+    if (username === "superadmin" && password === "12345") {
+      setCurrentRole("SUPERADMIN");
+      setUser({ name: "Super Admin", username: "superadmin", role: "SUPERADMIN" });
+      setSelectedStoreId(null);
+      return { success: true, redirectTo: "/superadmin" };
+    }
     
     return { success: false, message: "Invalid credentials" };
   }, []);
@@ -102,6 +138,11 @@ export function InventoryProvider({ children }) {
     setUser(null);
     setManagedStoreId(null);
     setSelectedStoreId(null);
+    // Clear localStorage
+    localStorage.removeItem('rcw_currentRole');
+    localStorage.removeItem('rcw_user');
+    localStorage.removeItem('rcw_managedStoreId');
+    localStorage.removeItem('rcw_selectedStoreId');
   }, []);
 
   // Update stock quantity

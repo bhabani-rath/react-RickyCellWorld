@@ -1,8 +1,7 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { StoreProvider } from "./context/StoreContext";
 import { ProductProvider } from "./context/ProductContext";
 import { InventoryProvider } from "./context/InventoryContext";
-import { CartProvider } from "./context/CartContext";
 import { ShowcaseProvider } from "./context/ShowcaseContext";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
@@ -26,7 +25,14 @@ import ShowcasePage from "./pages/admin/ShowcasePage";
 import InventoryOverviewPage from "./pages/Inventory/InventoryOverviewPage";
 import StockTransferPage from "./pages/Inventory/StockTransferPage";
 
-// Home page component - VijaysSales Style
+// Superadmin Components
+import SuperadminLayout from "./components/superadmin/SuperadminLayout";
+import RoleManagementPage from "./components/superadmin/RoleManagement/RoleManagementPage";
+import AddRolePage from "./components/superadmin/RoleManagement/AddRolePage";
+import UserManagementPage from "./components/superadmin/UserManagement/UserManagementPage";
+import AddUserPage from "./components/superadmin/UserManagement/AddUserPage";
+import { Navigate } from "react-router-dom";
+
 function HomePage() {
   return (
     <>
@@ -40,66 +46,67 @@ function HomePage() {
   );
 }
 
-// Public layout wrapper
-function PublicLayout({ children }) {
+function PublicLayout() {
   return (
     <div className="min-h-screen bg-background-light font-display text-slate-900 antialiased overflow-x-hidden">
       <StoreProvider>
         <Navbar />
-        {children}
+        <Outlet />
       </StoreProvider>
       <Footer />
     </div>
   );
 }
 
+// Define the router with React Router 7 data router pattern
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <PublicLayout />,
+    children: [
+      { index: true, element: <HomePage /> },
+      { path: "category", element: <CategoryListingPage /> },
+      { path: "product/:id", element: <ProductDetailPage /> },
+    ],
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      { index: true, element: <DashboardPage /> },
+      { path: "products", element: <ProductsPage /> },
+      { path: "showcase", element: <ShowcasePage /> },
+      { path: "inventory", element: <InventoryOverviewPage /> },
+      { path: "inventory/transfer", element: <StockTransferPage /> },
+    ],
+  },
+  {
+    path: "/superadmin",
+    element: <SuperadminLayout />,
+    children: [
+      { index: true, element: <Navigate to="roles" replace /> },
+      { path: "roles", element: <RoleManagementPage /> },
+      { path: "roles/add", element: <AddRolePage /> },
+      { path: "users", element: <UserManagementPage /> },
+      { path: "users/add", element: <AddUserPage /> },
+    ],
+  },
+]);
+
+
 function App() {
   return (
-    <CartProvider>
     <InventoryProvider>
       <ProductProvider>
         <ShowcaseProvider>
-        <Routes>
-          {/* Public Routes */}
-          <Route
-            path="/"
-            element={
-              <PublicLayout>
-                <HomePage />
-              </PublicLayout>
-            }
-          />
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/category"
-            element={
-              <PublicLayout>
-                <CategoryListingPage />
-              </PublicLayout>
-            }
-          />
-          <Route
-            path="/product/:id"
-            element={
-              <PublicLayout>
-                <ProductDetailPage />
-              </PublicLayout>
-            }
-          />
-
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<DashboardPage />} />
-            <Route path="products" element={<ProductsPage />} />
-            <Route path="showcase" element={<ShowcasePage />} />
-            <Route path="inventory" element={<InventoryOverviewPage />} />
-            <Route path="inventory/transfer" element={<StockTransferPage />} />
-          </Route>
-        </Routes>
+          <RouterProvider router={router} />
         </ShowcaseProvider>
       </ProductProvider>
     </InventoryProvider>
-    </CartProvider>
   );
 }
 
