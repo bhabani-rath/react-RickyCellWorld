@@ -1,102 +1,106 @@
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import { StoreProvider } from "./context/StoreContext";
-import { ProductProvider } from "./context/ProductContext";
-import { InventoryProvider } from "./context/InventoryContext";
-import { ShowcaseProvider } from "./context/ShowcaseContext";
-import Navbar from "./components/layout/Navbar";
-import Footer from "./components/layout/Footer";
+import { Suspense, lazy } from 'react';
+import { createBrowserRouter, RouterProvider, Outlet, Navigate } from 'react-router-dom';
+import { StoreProvider } from './context/StoreContext';
+import { ProductProvider } from './context/ProductContext';
+import { InventoryProvider } from './context/InventoryContext';
+import { ShowcaseProvider } from './context/ShowcaseContext';
 
-// Public Page Components
-import Hero from "./pages/publicpage/Hero";
-import BankOffersBar from "./pages/publicpage/BankOffersBar";
-import Categories from "./pages/publicpage/Categories";
-import FeaturedProducts from "./pages/publicpage/FeaturedProducts";
-import BrandShowcase from "./pages/publicpage/BrandShowcase";
-import TrustBadges from "./pages/publicpage/TrustBadges";
-import CategoryListingPage from "./pages/publicpage/CategoryListingPage";
-import ProductDetailPage from "./pages/publicpage/ProductDetailPage";
-import LoginPage from "./pages/auth/LoginPage";
+// Eager load layouts for instant navigation feel
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
+import AdminLayout from './components/admin/AdminLayout';
+import SuperadminLayout from './components/superadmin/SuperadminLayout';
+import StoreManagerLayout from './components/store-manager/StoreManagerLayout';
 
-// Admin Components
-import AdminLayout from "./components/admin/AdminLayout";
-import DashboardPage from "./pages/admin/DashboardPage";
-import ProductsPage from "./pages/admin/ProductsPage";
-import ShowcasePage from "./pages/admin/ShowcasePage";
-import InventoryOverviewPage from "./pages/Inventory/InventoryOverviewPage";
-import StockTransferPage from "./pages/Inventory/StockTransferPage";
+// Lazy load all pages
+const HomePage = lazy(() => import('./pages/publicpage/HomePage')); // Combine Hero+Categories+etc into one page
+const CategoryListingPage = lazy(() => import('./pages/publicpage/CategoryListingPage'));
+const ProductDetailPage = lazy(() => import('./pages/publicpage/ProductDetailPage'));
+const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
 
-// Superadmin Components
-import SuperadminLayout from "./components/superadmin/SuperadminLayout";
-import RoleManagementPage from "./components/superadmin/RoleManagement/RoleManagementPage";
-import AddRolePage from "./components/superadmin/RoleManagement/AddRolePage";
-import UserManagementPage from "./components/superadmin/UserManagement/UserManagementPage";
-import AddUserPage from "./components/superadmin/UserManagement/AddUserPage";
-import { Navigate } from "react-router-dom";
+// Admin pages
+const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
+const ProductsPage = lazy(() => import('./pages/admin/ProductsPage'));
+const ShowcasePage = lazy(() => import('./pages/admin/ShowcasePage'));
+const InventoryOverviewPage = lazy(() => import('./pages/Inventory/InventoryOverviewPage'));
+const StockTransferPage = lazy(() => import('./pages/Inventory/StockTransferPage'));
 
-function HomePage() {
-  return (
-    <>
-      <Hero />
-      <BankOffersBar />
-      <Categories />
-      <FeaturedProducts />
-      <BrandShowcase />
-      <TrustBadges />
-    </>
-  );
-}
+// Superadmin pages
+const RoleManagementPage = lazy(() => import('./components/superadmin/RoleManagement/RoleManagementPage'));
+const AddRolePage = lazy(() => import('./components/superadmin/RoleManagement/AddRolePage'));
+const UserManagementPage = lazy(() => import('./components/superadmin/UserManagement/UserManagementPage'));
+const AddUserPage = lazy(() => import('./components/superadmin/UserManagement/AddUserPage'));
 
+// Loader component
+import RDWLoader from './components/common/RDWLoader';
+
+// Wrapper for lazy components with RDWLoader
+const Lazy = ({ children }) => (
+  <Suspense fallback={<RDWLoader progress={50} />}>{children}</Suspense>
+);
+
+// Layouts
 function PublicLayout() {
   return (
     <div className="min-h-screen bg-background-light font-display text-slate-900 antialiased overflow-x-hidden">
       <StoreProvider>
         <Navbar />
         <Outlet />
+        <Footer />
       </StoreProvider>
-      <Footer />
     </div>
   );
 }
 
-// Define the router with React Router 7 data router pattern
+// Route definitions
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <PublicLayout />,
     children: [
-      { index: true, element: <HomePage /> },
-      { path: "category", element: <CategoryListingPage /> },
-      { path: "product/:id", element: <ProductDetailPage /> },
+      { index: true, element: <Lazy><HomePage /></Lazy> },
+      { path: 'category', element: <Lazy><CategoryListingPage /></Lazy> },
+      { path: 'product/:id', element: <Lazy><ProductDetailPage /></Lazy> },
     ],
   },
   {
-    path: "/login",
-    element: <LoginPage />,
+    path: '/login',
+    element: <Lazy><LoginPage /></Lazy>,
   },
   {
-    path: "/admin",
+    path: '/admin',
     element: <AdminLayout />,
     children: [
-      { index: true, element: <DashboardPage /> },
-      { path: "products", element: <ProductsPage /> },
-      { path: "showcase", element: <ShowcasePage /> },
-      { path: "inventory", element: <InventoryOverviewPage /> },
-      { path: "inventory/transfer", element: <StockTransferPage /> },
+      { index: true, element: <Lazy><DashboardPage /></Lazy> },
+      { path: 'loader', element: <Lazy><RDWLoader /></Lazy> },
+      { path: 'products', element: <Lazy><ProductsPage /></Lazy> },
+      { path: 'showcase', element: <Lazy><ShowcasePage /></Lazy> },
+      { path: 'inventory', element: <Lazy><InventoryOverviewPage /></Lazy> },
+      { path: 'inventory/transfer', element: <Lazy><StockTransferPage /></Lazy> },
     ],
   },
   {
-    path: "/superadmin",
+    path: '/superadmin',
     element: <SuperadminLayout />,
     children: [
       { index: true, element: <Navigate to="roles" replace /> },
-      { path: "roles", element: <RoleManagementPage /> },
-      { path: "roles/add", element: <AddRolePage /> },
-      { path: "users", element: <UserManagementPage /> },
-      { path: "users/add", element: <AddUserPage /> },
+      { path: 'roles', element: <Lazy><RoleManagementPage /></Lazy> },
+      { path: 'roles/add', element: <Lazy><AddRolePage /></Lazy> },
+      { path: 'users', element: <Lazy><UserManagementPage /></Lazy> },
+      { path: 'users/add', element: <Lazy><AddUserPage /></Lazy> },
+    ],
+  },
+  {
+    path: '/store-manager',
+    element: <StoreManagerLayout />,
+    children: [
+      { index: true, element: <Lazy><DashboardPage /></Lazy> },
+      { path: 'products', element: <Lazy><ProductsPage /></Lazy> },
+      { path: 'inventory', element: <Lazy><InventoryOverviewPage /></Lazy> },
+      { path: 'inventory/transfer', element: <Lazy><StockTransferPage /></Lazy> },
     ],
   },
 ]);
-
 
 function App() {
   return (

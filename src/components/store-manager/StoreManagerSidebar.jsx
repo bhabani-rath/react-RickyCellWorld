@@ -1,46 +1,33 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useInventory } from "../../context/InventoryContext";
-import { ROLES } from "../../data/inventory";
 
 const navigation = [
   {
     name: "Dashboard",
-    href: "/admin",
+    href: "/store-manager",
     icon: "dashboard",
     end: true,
   },
   {
     name: "Products",
-    href: "/admin/products",
+    href: "/store-manager/products",
     icon: "inventory_2",
   },
   {
-    name: "Showcase",
-    href: "/admin/showcase",
-    icon: "featured_play_list",
-    ownerOnly: true,
-  },
-  {
     name: "Stock Overview",
-    href: "/admin/inventory",
+    href: "/store-manager/inventory",
     icon: "warehouse",
   },
   {
     name: "Stock Transfer",
-    href: "/admin/inventory/transfer",
+    href: "/store-manager/inventory/transfer",
     icon: "swap_horiz",
-    requiresTransfer: true,
   },
 ];
 
-function AdminSidebar({ isOpen, onClose }) {
-  const { permissions, stockAlerts, currentRole } = useInventory();
-
-  const filteredNav = navigation.filter((item) => {
-    if (item.requiresTransfer && !permissions.canTransfer) return false;
-    if (item.ownerOnly && currentRole !== ROLES.OWNER) return false;
-    return true;
-  });
+function StoreManagerSidebar({ isOpen, onClose }) {
+  const { stockAlerts } = useInventory();
+  const location = useLocation();
 
   return (
     <>
@@ -56,14 +43,14 @@ function AdminSidebar({ isOpen, onClose }) {
         {/* Logo Section */}
         <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 dark:border-slate-700">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center">
+            <div className="w-9 h-9 bg-emerald-600 rounded-xl flex items-center justify-center">
               <span className="material-symbols-outlined text-white text-xl">
-                inventory
+                storefront
               </span>
             </div>
             <div>
-              <h1 className="text-sm font-bold text-slate-900 dark:text-white">RCW Admin</h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Inventory System</p>
+              <h1 className="text-sm font-bold text-slate-900 dark:text-white">RCW Manager</h1>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Store Portal</p>
             </div>
           </div>
           <button
@@ -76,7 +63,7 @@ function AdminSidebar({ isOpen, onClose }) {
 
         {/* Navigation */}
         <nav className="p-4 space-y-1">
-          {filteredNav.map((item) => (
+          {navigation.map((item) => (
             <NavLink
               key={item.href}
               to={item.href}
@@ -85,19 +72,21 @@ function AdminSidebar({ isOpen, onClose }) {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                   isActive
-                    ? "bg-primary text-white shadow-lg shadow-primary/25"
-                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white"
+                    ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 shadow-sm ring-1 ring-emerald-200 dark:ring-emerald-800"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white"
                 }`
               }
             >
-              <span className="material-symbols-outlined text-xl">
+              <span className={`material-symbols-outlined text-xl ${
+                location.pathname === item.href ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-slate-500"
+              }`}>
                 {item.icon}
               </span>
               {item.name}
               
               {/* Alert Badge for Stock Overview */}
-              {item.href === "/admin/inventory" && stockAlerts.total > 0 && (
-                <span className="ml-auto px-2 py-0.5 text-xs font-bold bg-red-500 text-white rounded-full">
+              {item.href === "/store-manager/inventory" && stockAlerts.total > 0 && (
+                <span className="ml-auto px-2 py-0.5 text-xs font-bold bg-amber-500 text-white rounded-full">
                   {stockAlerts.total}
                 </span>
               )}
@@ -107,19 +96,19 @@ function AdminSidebar({ isOpen, onClose }) {
 
         {/* Quick Stats */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-100 dark:border-slate-700">
-          <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-            <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
-              Stock Alerts
+          <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-4 border border-emerald-100 dark:border-emerald-800">
+            <h3 className="text-xs font-semibold text-emerald-800 dark:text-emerald-400 uppercase tracking-wider mb-2">
+              My Store Alerts
             </h3>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600 dark:text-slate-300">Low Stock</span>
-                <span className="px-2 py-0.5 text-xs font-bold bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-400 rounded-full">
+                <span className="text-sm text-emerald-900/70 dark:text-emerald-300/70">Low Stock</span>
+                <span className="px-2 py-0.5 text-xs font-bold bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-400 rounded-full">
                   {stockAlerts.lowStock}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600 dark:text-slate-300">Out of Stock</span>
+                <span className="text-sm text-emerald-900/70 dark:text-emerald-300/70">Out of Stock</span>
                 <span className="px-2 py-0.5 text-xs font-bold bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400 rounded-full">
                   {stockAlerts.outOfStock}
                 </span>
@@ -132,4 +121,4 @@ function AdminSidebar({ isOpen, onClose }) {
   );
 }
 
-export default AdminSidebar;
+export default StoreManagerSidebar;

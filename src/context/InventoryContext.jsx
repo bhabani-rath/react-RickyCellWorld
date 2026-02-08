@@ -119,7 +119,7 @@ export function InventoryProvider({ children }) {
       const storeId = storeLocations[0].id; // Default to first store for demo
       setManagedStoreId(storeId);
       setUser({ name: "Store Manager", username: "manager", role: ROLES.STORE_MANAGER, storeId });
-      return { success: true };
+      return { success: true, redirectTo: "/store-manager" };
     }
 
     if (username === "superadmin" && password === "12345") {

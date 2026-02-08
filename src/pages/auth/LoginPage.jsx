@@ -51,7 +51,14 @@ function LoginPage() {
   // Redirect if logged in
   useEffect(() => {
     if (user) {
-      const from = location.state?.from?.pathname || "/admin";
+      // Determine the correct redirect path based on role
+      let defaultPath = "/admin";
+      if (user.role === "SUPERADMIN") {
+        defaultPath = "/superadmin";
+      } else if (user.role === "STORE_MANAGER") {
+        defaultPath = "/store-manager";
+      }
+      const from = location.state?.from?.pathname || defaultPath;
       navigate(from, { replace: true });
     }
   }, [user, navigate, location]);

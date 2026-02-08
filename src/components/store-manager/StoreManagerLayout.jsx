@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useInventory } from "../../context/InventoryContext";
 import { ROLES } from "../../data/inventory";
-import AdminSidebar from "./AdminSidebar";
-import AdminHeader from "./AdminHeader";
+import StoreManagerSidebar from "./StoreManagerSidebar";
+import AdminHeader from "../admin/AdminHeader"; // Reuse header for now
 
-function AdminLayout() {
+function StoreManagerLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user, isLoading } = useInventory();
+  const { user, currentRole, isLoading } = useInventory();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,15 +22,13 @@ function AdminLayout() {
       return;
     }
 
-    // Role Enforcement: Only OWNER can access /admin
-    // (Store Managers should be redirected to /store-manager)
-    if (user.role === ROLES.STORE_MANAGER) {
-      navigate("/store-manager", { replace: true });
+    if (currentRole !== ROLES.STORE_MANAGER) {
+      // If not a manager, redirect back (or to their appropriate dashboard)
+      navigate("/"); 
     }
-  }, [user, isLoading, navigate, location]);
+  }, [user, currentRole, isLoading, navigate, location]);
 
-  // Show nothing while checking auth
-  if (isLoading || !user) return null;
+  if (isLoading || !user || currentRole !== ROLES.STORE_MANAGER) return null;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors">
@@ -43,14 +41,14 @@ function AdminLayout() {
       )}
 
       {/* Sidebar */}
-      <AdminSidebar
+      <StoreManagerSidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
 
       {/* Main Content Area */}
       <div className="lg:pl-64">
-        {/* Header */}
+        {/* Header - Reusing AdminHeader but it works generally */}
         <AdminHeader onMenuClick={() => setSidebarOpen(true)} />
 
         {/* Page Content */}
@@ -62,4 +60,4 @@ function AdminLayout() {
   );
 }
 
-export default AdminLayout;
+export default StoreManagerLayout;
