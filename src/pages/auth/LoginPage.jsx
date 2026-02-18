@@ -102,7 +102,7 @@ function LoginPage() {
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-slate-200/40 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-slate-300/30 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[24px_24px]" />
       </div>
 
       <motion.div 
@@ -203,7 +203,7 @@ function LoginPage() {
                   className="rounded-xl bg-red-50/80 backdrop-blur border border-red-100 p-4 shadow-sm"
                 >
                   <div className="flex items-start gap-3">
-                    <HiOutlineExclamationCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                    <HiOutlineExclamationCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
                     <div>
                       <h3 className="text-sm font-semibold text-red-900">
                         Authentication Failed
